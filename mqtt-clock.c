@@ -68,7 +68,7 @@ void send_value(struct mosquitto *mosq, const char *topic,
 		     strlen(buf),  	/* payloadlen */
 		     buf,		/* payload */
 		     2, 		/* qos */
-		     true		/* retain */
+		     false		/* retain */
   );
   if (ret)
     syslog(LOG_ERR, "Error on publish %d", ret);
@@ -114,41 +114,33 @@ int main(int argc, char *argv[]) {
     struct datetime current_dt;
     decode_current_time(&current_dt);
 
-    if (old_dt.year != current_dt.year) {
+    if (old_dt.minute != current_dt.minute) {
       send_value(mosq,
 		 "Netz39/Service/Clock/Wallclock/Year",
 		 "%02d",
 		 1900 + current_dt.year);
       old_dt.year = current_dt.year;
-    }
 
-    if (old_dt.month != current_dt.month) {
       send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Month",
+		 "Netz39/Service/Clock/Wallclock/Simple/Month",
 		 "%02d",
 		 current_dt.month);
       old_dt.month = current_dt.month;
-    }
 
-    if (old_dt.day != current_dt.day) {
       send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Day",
+		 "Netz39/Service/Clock/Wallclock/Simple/Day",
 		 "%02d",
 		 current_dt.day);
       old_dt.day = current_dt.day;
-    }
 
-    if (old_dt.hour != current_dt.hour) {
       send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Hour",
+		 "Netz39/Service/Clock/Wallclock/Simple/Hour",
 		 "%02d",
 		 current_dt.hour);
       old_dt.hour = current_dt.hour;
-    }
 
-    if (old_dt.minute != current_dt.minute) {
       send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Minute",
+		 "Netz39/Service/Clock/Wallclock/Simple/Minute",
 		 "%02d",
 		 current_dt.minute);
       old_dt.minute = current_dt.minute;
@@ -156,7 +148,7 @@ int main(int argc, char *argv[]) {
 
     if (old_dt.second != current_dt.second) {
       send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Second",
+		 "Netz39/Service/Clock/Wallclock/Simple/Second",
 		 "%02d",
 		 current_dt.second);
       old_dt.second = current_dt.second;
@@ -167,7 +159,7 @@ int main(int argc, char *argv[]) {
 		 current_millis());
     }
 
-    sleep(0.2);
+    usleep(200*1000);
     mqtt_loop(mosq);
   } // while (run)
 
