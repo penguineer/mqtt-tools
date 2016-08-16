@@ -16,12 +16,14 @@ all: mqtt-clock
 clean:
 	rm mqtt-clock *.o
 
-mqtt-clock: mqtt-clock.o mosqhelper.o
-	@$(CC) -o $@ mqtt-clock.o mosqhelper.o $(LDFLAGS) $(LDLIBS)
+mqtt-clock: mqtt-clock.o mosqhelper.o mosqagent.o
+	@$(CC) -o $@ mqtt-clock.o mosqhelper.o mosqagent.o $(LDFLAGS) $(LDLIBS)
 
 mqtt-clock.o: mqtt-clock.c
 	@$(CC) -c mqtt-clock.c -o $@
 
-mosqhelper.o: mosqhelper.c
+mosqhelper.o: mosqhelper.c mosqhelper.h
 	@$(CC) -c mosqhelper.c -o $@
 
+mosqagent.o: mosqagent.c mosqagent.h
+	@$(CC) -c mosqagent.c -o $@
