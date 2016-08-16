@@ -6,14 +6,14 @@
 
 int mqtt_init(const char* clientname,
 	      struct mosquitto **mosq,
-	      void **mqtt_obj)
+	      void *mqtt_obj)
 {
   // initialize MQTT
   mosquitto_lib_init();
 
   *mosq = mosquitto_new(clientname,
 		       false, 	/* clean session */
-		       *mqtt_obj);
+		       mqtt_obj);
   if (!(*mosq)) {
     syslog(LOG_ERR, "MQTT error on init: %d (%s)",
 		errno,

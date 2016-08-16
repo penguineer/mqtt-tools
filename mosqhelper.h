@@ -9,7 +9,7 @@
 
 int mqtt_init(const char* clientname,
 	      struct mosquitto **mosq,
-	      void **mqtt_obj);
+	      void *mqtt_obj);
 
 int mqtt_connect(struct mosquitto *mosq,
                  const char* host,
