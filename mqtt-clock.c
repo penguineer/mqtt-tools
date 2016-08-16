@@ -147,8 +147,10 @@ int main(int argc, char *argv[]) {
 #endif
   syslog(LOG_INFO, "MQTT Clock serivce started.");
 
+  // set to non-time values
   struct clock_state state = {
-    .current_second = -1
+    .current_second = 0xff,
+    .current_minute = 0xff,
   };
 
   struct mosqagent* agent;
