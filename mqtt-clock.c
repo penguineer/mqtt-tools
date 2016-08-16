@@ -9,6 +9,7 @@
 
 #include <time.h>
 
+#include "mosqagent.h"
 #include "mosqhelper.h"
 
 #define WITH_SYSLOG
@@ -20,18 +21,16 @@
 #	define LOG_ERR  stderr
 #endif
 
-const char* MQTT_HOST 	= "platon";
-const int   MQTT_PORT 	= 1883;
+static struct mosqagent_config config = {
+  .client_name = "mqtt-clock",
+  .host = "localhost",
+  .port = 1883,
+};
 
-/**
- * Get the milliseconds since epoch.
- */
-long current_millis() {
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  
-  return tv.tv_sec*1000L + tv.tv_usec/1000L;
-}
+struct clock_state {
+  uint8_t current_second;
+  uint8_t current_minute;
+};
 
 struct datetime {
   int year;
@@ -41,6 +40,17 @@ struct datetime {
   int minute;
   int second;
 };
+
+/**
+ * Get the seconds since epoch.
+ */
+time_t current_unixtime() {
+  struct timeval tv;
+  gettimeofday(&tv, 0);
+  
+  return tv.tv_sec;
+}
+
 
 void decode_current_time(struct datetime *dt)
 {
@@ -56,7 +66,7 @@ void decode_current_time(struct datetime *dt)
 }
 
 void send_value(struct mosquitto *mosq, const char *topic,
-		const char* format, long val)
+		const char* format, int val)
 {
   char buf[16];
   int ret;
@@ -74,98 +84,104 @@ void send_value(struct mosquitto *mosq, const char *topic,
     syslog(LOG_ERR, "Error on publish %d", ret);
 }
 
+struct mosqagent_result* clock_idle(struct mosqagent *agent)
+{
+  struct mosquitto *mosq;
+  struct clock_state *state;
+  struct datetime current_dt;
+
+  mosq = agent->mosq;
+  state = (struct clock_state*) mosqagent_get_private_data(agent);
+
+  decode_current_time(&current_dt);
+
+
+  if (state->current_minute != current_dt.minute) {
+    send_value(mosq,
+		"Netz39/Service/Clock/Wallclock/Year",
+		"%02d",
+		1900 + current_dt.year);
+
+    send_value(mosq,
+		"Netz39/Service/Clock/Wallclock/Simple/Month",
+		"%02d",
+		current_dt.month);
+
+    send_value(mosq,
+		"Netz39/Service/Clock/Wallclock/Simple/Day",
+		"%02d",
+		current_dt.day);
+
+    send_value(mosq,
+		"Netz39/Service/Clock/Wallclock/Simple/Hour",
+		"%02d",
+		current_dt.hour);
+
+    send_value(mosq,
+		"Netz39/Service/Clock/Wallclock/Simple/Minute",
+		"%02d",
+		current_dt.minute);
+    state->current_minute = current_dt.minute;
+  }
+
+  if (state->current_second != current_dt.second) {
+    send_value(mosq,
+		"Netz39/Service/Clock/Wallclock/Simple/Second",
+		"%02d",
+		current_dt.second);
+    state->current_second = current_dt.second;
+
+    send_value(mosq,
+		"Netz39/Service/Clock/UnixTimestamp",
+		"%d",
+		current_unixtime());
+  }
+
+  return NULL;
+}
+
 int main(int argc, char *argv[]) {
-  const char* mqtt_client_name = "mqtt-clock";
-
-
   // initialize the system logging
 #ifdef WITH_SYSLOG
-  openlog(mqtt_client_name, LOG_CONS | LOG_PID, LOG_USER);
+  openlog(config.client_name, LOG_CONS | LOG_PID, LOG_USER);
 #endif
   syslog(LOG_INFO, "MQTT Clock serivce started.");
 
-  void *mqtt_obj;
-  struct mosquitto *mosq;
-
-  if (mqtt_init(mqtt_client_name,
-	        &mosq,
-	        &mqtt_obj))
-    return -1;
-
-  if (mqtt_connect(mosq,
-	           MQTT_HOST,
-	           MQTT_PORT,
-	           0))
-    return -1;
-
-  struct datetime old_dt = {
-    .year = -1,
-    .month = -1,
-    .day = -1,
-    .hour = -1,
-    .minute = -1,
-    .second = -1
+  struct clock_state state = {
+    .current_second = -1
   };
 
+  struct mosqagent* agent;
+  agent = mosqagent_init_agent(&state);
+
+  if (agent) {
+    int ret;
+    ret = mosqagent_setup_mqtt(agent, &config);
+    if (ret) {
+      syslog(LOG_ERR, "Mosquitto Agent could not connect: %s",
+	    mosqagent_strerror(errno));
+    }
+  }
+
+  if (agent) {
+    int ret;
+    mosqagent_add_idle_call(agent, clock_idle);
+
+    if (!ret)
+      syslog(LOG_ERR, "Cannot add clock idle call: %s",
+	     mosqagent_strerror(ret));
+  }
+
   int ret;
-
-  bool run = (mosq != NULL);
+  bool run = (agent != NULL);
   while (run) {
-    struct datetime current_dt;
-    decode_current_time(&current_dt);
-
-    if (old_dt.minute != current_dt.minute) {
-      send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Year",
-		 "%02d",
-		 1900 + current_dt.year);
-      old_dt.year = current_dt.year;
-
-      send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Simple/Month",
-		 "%02d",
-		 current_dt.month);
-      old_dt.month = current_dt.month;
-
-      send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Simple/Day",
-		 "%02d",
-		 current_dt.day);
-      old_dt.day = current_dt.day;
-
-      send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Simple/Hour",
-		 "%02d",
-		 current_dt.hour);
-      old_dt.hour = current_dt.hour;
-
-      send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Simple/Minute",
-		 "%02d",
-		 current_dt.minute);
-      old_dt.minute = current_dt.minute;
-    }
-
-    if (old_dt.second != current_dt.second) {
-      send_value(mosq,
-		 "Netz39/Service/Clock/Wallclock/Simple/Second",
-		 "%02d",
-		 current_dt.second);
-      old_dt.second = current_dt.second;
-
-      send_value(mosq,
-	         "Netz39/Service/Clock/UnixTimestamp",
-		 "%ld",
-		 current_millis());
-    }
+    mosqagent_idle(agent);
 
     usleep(200*1000);
-    mqtt_loop(mosq);
+    mqtt_loop(agent->mosq);
   } // while (run)
 
-
-  // clean-up MQTT
-  mqtt_close(mosq);
+  mosqagent_close_agent(agent);
 
   syslog(LOG_INFO, "MQTT Clock serivce quit.");
 
