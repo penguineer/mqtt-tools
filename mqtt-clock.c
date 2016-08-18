@@ -105,7 +105,7 @@ struct mosqagent_result* clock_idle(struct mosqagent *agent)
     send_value(mosq,
 		"Netz39/Service/Clock/Wallclock/Simple/Month",
 		"%02d",
-		current_dt.month);
+		1 + current_dt.month);
 
     send_value(mosq,
 		"Netz39/Service/Clock/Wallclock/Simple/Day",
