@@ -13,6 +13,10 @@
 #include "mosqagent.h"
 #include "mosqhelper.h"
 
+int mqtta_send_message(struct mosqagent* agent,
+                       struct mqtta_message *msg);
+
+
 #define WITH_SYSLOG
 #ifdef WITH_SYSLOG
 #	include <syslog.h>
@@ -66,59 +70,97 @@ void decode_current_time(struct datetime *dt)
   dt->second	= tm.tm_sec;
 }
 
-void send_value(struct mosquitto *mosq, const char *topic,
-		const char* format, int val)
+struct mqtta_message* create_value_message(const char* topic,
+                                           const char* format,
+                                           const int val)
 {
-  char buf[16];
-  int ret;
+    char buf[16];
+    int ret;
 
-  snprintf(buf, 16, format, val);
+    snprintf(buf, 16, format, val);
 
-  ret = mqtt_publish(mosq, NULL,
-		     topic,
-		     strlen(buf),  	/* payloadlen */
-		     buf,		/* payload */
-		     2, 		/* qos */
-		     false		/* retain */
-  );
-  if (ret)
-    syslog(LOG_ERR, "Error on publish %d", ret);
+    struct mqtta_message *msg;
+    msg = mqtta_create_message(topic,
+                               buf,     /* payload */
+                               2,       /* qos */
+                               false    /* retain */
+                              );
+
+    return msg;
+}
+
+int mqtta_send_message(struct mosqagent* agent,
+                       struct mqtta_message *msg)
+{
+    if (!agent || !msg) {
+        errno = EINVAL;
+        goto fail;
+    }
+
+    int ret;
+
+    ret = mqtt_publish(agent->mosq, NULL,
+                       msg->topic,
+                       strlen(msg->payload), msg->payload,
+                       msg->qos,
+                       msg->retain);
+
+    return ret;
+
+fail:
+    return -1;
+}
+
+void send_value(struct mosqagent* agent,
+                const char *topic,
+                const char* format,
+                int val)
+{
+    int ret;
+
+    struct mqtta_message *msg;
+    msg = create_value_message(topic, format, val);
+
+    ret = mqtta_send_message(agent, msg);
+
+    mqtta_dispose_message(msg);
+
+    if (ret)
+        syslog(LOG_ERR, "Error on publish %d", ret);
 }
 
 struct mosqagent_result* clock_idle(struct mosqagent *agent)
 {
-  struct mosquitto *mosq;
   struct clock_state *state;
   struct datetime current_dt;
 
-  mosq = agent->mosq;
   state = (struct clock_state*) mosqagent_get_private_data(agent);
 
   decode_current_time(&current_dt);
 
 
   if (state->current_minute != current_dt.minute) {
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/Wallclock/Year",
 		"%02d",
 		1900 + current_dt.year);
 
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/Wallclock/Simple/Month",
 		"%02d",
 		1 + current_dt.month);
 
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/Wallclock/Simple/Day",
 		"%02d",
 		current_dt.day);
 
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/Wallclock/Simple/Hour",
 		"%02d",
 		current_dt.hour);
 
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/Wallclock/Simple/Minute",
 		"%02d",
 		current_dt.minute);
@@ -126,13 +168,13 @@ struct mosqagent_result* clock_idle(struct mosqagent *agent)
   }
 
   if (state->current_second != current_dt.second) {
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/Wallclock/Simple/Second",
 		"%02d",
 		current_dt.second);
     state->current_second = current_dt.second;
 
-    send_value(mosq,
+    send_value(agent,
 		"Netz39/Service/Clock/UnixTimestamp",
 		"%d",
 		current_unixtime());
