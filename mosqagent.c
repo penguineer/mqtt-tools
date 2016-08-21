@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <mosquitto.h>
 
@@ -14,6 +15,90 @@ struct mosqagent_idle_list {
 };
 
 void mosqagent_clear_idle_list(struct mosqagent *agent);
+
+/**
+ * Create a message and deep-copy the parameter values.
+ */
+struct mqtta_message* mqtta_create_message(const char* topic,
+                                           const char* payload,
+                                           const int qos,
+                                           const bool retain)
+{
+    // Check parameters
+
+    if (!topic || (strlen(topic) == 0)) {
+        errno = EINVAL;
+        goto fail;
+    }
+
+    if (!payload || (strlen(payload) == 0)) {
+        errno = EINVAL;
+        goto fail;
+    }
+
+    if ((qos < 0) || (qos > 2)) {
+        errno = EINVAL;
+        goto fail;
+    }
+
+    // create the struct
+    struct mqtta_message *msg;
+    msg = malloc(sizeof(*msg));
+
+    if (!msg) {
+        errno = ENOMEM;
+        goto fail;
+    }
+
+    // copy topic and payload
+    const int topiclen = strlen(topic) + 1; // plus \0
+    msg->topic = malloc(topiclen);
+    if (!msg->topic) {
+        errno = ENOMEM;
+        goto fail_with_msg;
+    }
+    strncpy(msg->topic, topic, topiclen);
+
+    const int payloadlen = strlen(payload) + 1; // plus \0
+    msg->payload = malloc(payloadlen);
+    if (!msg->payload) {
+        errno = ENOMEM;
+        goto fail_with_topic;
+    }
+    strncpy(msg->payload, payload, payloadlen);
+
+    // set the remaining parameters
+    msg->qos = qos;
+    msg->retain = retain;
+
+    // done
+    return msg;
+
+fail_with_topic:
+    if (msg)
+        free(msg->topic);
+
+fail_with_msg:
+    free(msg);
+
+fail:
+    return NULL;
+}
+
+void mqtta_dispose_message(struct mqtta_message *msg)
+{
+    if (!msg)
+        return;
+
+    // free memory for all message parts
+    if (msg->topic)
+        free (msg->topic);
+
+    if (msg->payload)
+        free(msg->payload);
+
+    free(msg);
+}
 
 
 struct mosqagent* mosqagent_init_agent(void *priv_data)

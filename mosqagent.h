@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 struct mosqagent_idle_list;
 
 struct mosqagent {
@@ -9,6 +11,21 @@ struct mosqagent {
 
    void *priv_data;
 };
+
+struct mqtta_message {
+    char* topic;
+    char* payload;
+    int qos;
+    bool retain;
+};
+
+struct mqtta_message* mqtta_create_message(const char* topic,
+                                           const char* payload,
+                                           const int qos,
+                                           const bool retain);
+
+void mqtta_dispose_message(struct mqtta_message *msg);
+
 
 struct mosqagent_result {
 
