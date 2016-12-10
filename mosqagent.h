@@ -27,6 +27,23 @@ struct mqtta_message* mqtta_create_message(const char* topic,
 void mqtta_dispose_message(struct mqtta_message *msg);
 
 
+struct mqtta_message_list {
+    struct mqtta_message_list *next;
+    struct mqtta_message *msg;
+};
+
+// TODO
+struct mqtta_message_list* mqtta_message_list_append(struct mqtta_message_list *list,
+                                                     struct mqtta_message *msg);
+
+//TODO
+struct mqtta_message_list* mqtta_message_list_remove(struct mqtta_message_list* list,
+                                                     struct mqtta_message* msg);
+
+//TODO
+struct mqtta_message_list* mqtta_message_list_dispose(struct mqtta_message_list* list);
+
+
 struct mosqagent_result {
 
 };
