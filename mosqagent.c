@@ -6,6 +6,8 @@
 
 #include <mosquitto.h>
 
+#include "mosqhelper.h"
+
 struct mosqagent_idle_list {
   struct mosqagent_idle_list *next;
   mosqagent_idle_call idle_call;
