@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include <time.h>
+#include <sys/time.h>
 
 #include "mosqagent.h"
 #include "mosqhelper.h"
@@ -167,7 +168,7 @@ int main(int argc, char *argv[]) {
 
   if (agent) {
     int ret;
-    mosqagent_add_idle_call(agent, clock_idle);
+    ret = mosqagent_add_idle_call(agent, clock_idle);
 
     if (!ret)
       syslog(LOG_ERR, "Cannot add clock idle call: %s",

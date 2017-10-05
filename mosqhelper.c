@@ -3,6 +3,7 @@
 #include <errno.h>
 
 #include <syslog.h>
+#include <unistd.h>
 
 int mqtt_init(const char* clientname,
 	      struct mosquitto **mosq,
