@@ -48,7 +48,7 @@ struct datetime {
 time_t current_unixtime() {
   struct timeval tv;
   gettimeofday(&tv, 0);
-  
+
   return tv.tv_sec;
 }
 
@@ -175,7 +175,6 @@ int main(int argc, char *argv[]) {
 	     mosqagent_strerror(ret));
   }
 
-  int ret;
   bool run = (agent != NULL);
   while (run) {
     mosqagent_idle(agent);
@@ -191,6 +190,6 @@ int main(int argc, char *argv[]) {
 #ifdef WITH_SYSLOG
   closelog();
 #endif
-    
+
   return 0;
 }
