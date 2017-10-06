@@ -1,6 +1,6 @@
 # MQTT basic tools for Netz39
 
-This is a library to handle 95% of MQTT use-cases in simple client software and provide an easy way to create a program that just sits around and reacts either on/with external events or MQTT messages
+This is a library to handle 95% of MQTT use-cases in simple client software and provide an easy way to create a program that just sits around and reacts either on/with external events or MQTT messages.
 
 ## Goals
 This project has two general goals:
@@ -17,6 +17,7 @@ The mqtt-clock.c shows a simple example of a (not yet daemonizied) agent that pr
 * Add subscription handling and callback methods on incoming MQTT messages.
 * Provide a way to return to-be-sent messages from the callback and idle handlers. Sending MQTT messages is blocking and should at some point go to a different thread/process.
 * Jim™ uses a second thread or process to handle possibly blocking network i/o. Jim is a smart developer. Be like Jim.
+* Implement the daemonizied agent part.
 * Documentation …
 
 ## Building
