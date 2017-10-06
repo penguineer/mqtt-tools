@@ -221,7 +221,6 @@ int main(int argc, char *argv[]) {
     mosqagent_idle(agent);
 
     usleep(200*1000);
-    mqtt_loop(agent->mosq);
   } // while (run)
 
   mosqagent_close_agent(agent);

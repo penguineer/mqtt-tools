@@ -245,10 +245,16 @@ int mosqagent_idle(struct mosqagent *agent)
 
         //TODO process idle call result, esp. check for errors
         e = e->next;
+
     }
 
+    int ret;
+    // call the mosquitto loop
+    // TODO only when idle calls had not critical errors
+    ret = mqtt_loop(agent->mosq);
+
     // TODO return type based on errros from idle calls
-    return 0;
+    return ret;
 }
 
 const char* mosqagent_strerror(int mosq_errno)
