@@ -24,6 +24,9 @@ struct mqtta_message* mqtta_create_message(const char* topic,
                                            const int qos,
                                            const bool retain);
 
+int mqtta_send_message(struct mosqagent* agent,
+                       struct mqtta_message *msg);
+
 void mqtta_dispose_message(struct mqtta_message *msg);
 
 

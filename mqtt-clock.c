@@ -13,10 +13,6 @@
 #include "mosqagent.h"
 #include "mosqhelper.h"
 
-int mqtta_send_message(struct mosqagent* agent,
-                       struct mqtta_message *msg);
-
-
 #define WITH_SYSLOG
 #ifdef WITH_SYSLOG
 #	include <syslog.h>
