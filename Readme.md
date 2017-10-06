@@ -20,6 +20,14 @@ The mqtt-clock.c shows a simple example of a (not yet daemonizied) agent that pr
 * Implement the daemonizied agent part.
 * Documentation …
 
+## License
+
+This project is licensed under the MIT License.
+
+The [Mosquitto library](https://mosquitto.org/) is dual licensed under the Eclipse Public License 1.0 and the Eclipse Distribution License 1.0 as described in the epl-v10 and edl-v10 files.
+
+See LICENSE.txt for further reading.
+
 ## Building
 
 Development happens with CMake and GCC.
