@@ -75,7 +75,6 @@ struct mqtta_message* create_value_message(const char* topic,
                                            const int val)
 {
     char buf[16];
-    int ret;
 
     snprintf(buf, 16, format, val);
 
