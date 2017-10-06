@@ -85,13 +85,19 @@ int mqtt_loop(struct mosquitto *mosq)
   // if failed, try to reconnect
   if (ret)
     mosquitto_reconnect(mosq);
+
+  return ret;
 }
 
 int mqtt_close(struct mosquitto *mosq)
 {
-  mosquitto_disconnect(mosq);
-  mosquitto_destroy(mosq);
-  mosquitto_lib_cleanup();
+    int ret;
+
+    ret = mosquitto_disconnect(mosq);
+    mosquitto_destroy(mosq);
+    mosquitto_lib_cleanup();
+
+    return ret;
 }
 
 int mqtt_publish(struct mosquitto *mosq,
