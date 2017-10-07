@@ -1,0 +1,7 @@
+mosqagent : {
+    name = "mqtt-clock";
+    broker : {
+         host = "localhost";
+         port = 1883;
+    };
+};
