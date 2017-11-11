@@ -1,3 +1,8 @@
+/*
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "mosqhelper.h"
 
 #include <errno.h>

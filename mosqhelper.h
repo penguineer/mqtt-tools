@@ -1,5 +1,7 @@
 /*
  * Helper Lib for libmosquitto
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 #pragma once
