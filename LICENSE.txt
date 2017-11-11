@@ -25,3 +25,12 @@ The Mosquitto library used in this project has the following license:
 
 This project is dual licensed under the Eclipse Public License 1.0 and the
 Eclipse Distribution License 1.0 as described in the epl-v10 and edl-v10 files.
+
+---------------------------------------------------------------------------
+Note:
+Individual files contain the following tag instead of the full license text.
+
+	SPDX-License-Identifier:	MIT
+
+This enables machine processing of license information based on the SPDX
+License Identifiers that are here available: http://spdx.org/licenses/

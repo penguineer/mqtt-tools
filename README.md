@@ -42,6 +42,7 @@ This is a very basic first go. Some parts of the API are working, but it is clea
 * Documentation …
 
 ## Maintainers
+
 This project is mostly, but not necessary solely, maintained by Stefan Haun (<tux@netz39.de>).
 
 ## Contribute
@@ -53,7 +54,9 @@ Bugs or wished may be reported with an issue. You can also open an issue to stat
 
 
 ## License
+
 This project is licensed under the MIT License.
+Instead of quoting the full license text in each source file, this project uses [SPDX license tags](https://spdx.org/).
 
 The [Mosquitto library](https://mosquitto.org/) is dual licensed under the Eclipse Public License 1.0 and the Eclipse Distribution License 1.0 as described in the epl-v10 and edl-v10 files.
 
