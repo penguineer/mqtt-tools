@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <libconfig.h>
+
 #include <mosquitto.h>
 
 #include "mosqhelper.h"
@@ -80,8 +82,7 @@ struct mqtta_message* mqtta_create_message(const char* topic,
     return msg;
 
 fail_with_topic:
-    if (msg)
-        free(msg->topic);
+    free(msg->topic);
 
 fail_with_msg:
     free(msg);
@@ -96,13 +97,104 @@ void mqtta_dispose_message(struct mqtta_message *msg)
         return;
 
     // free memory for all message parts
-    if (msg->topic)
-        free (msg->topic);
-
-    if (msg->payload)
-        free(msg->payload);
+    free (msg->topic);
+    free(msg->payload);
 
     free(msg);
+}
+
+static void destroy_configuration(struct mosqagent *agent)
+{
+    if (!agent || !agent->config)
+        return;
+
+    free(agent->config->client_name);
+    free(agent->config->host);
+
+    free(agent->config);
+
+    agent->config = NULL;
+}
+
+int mqtta_load_configuration(struct mosqagent *agent,
+                             const char* filepath)
+{
+    int ret = 0;
+
+    struct mosqagent_config *config;
+
+    config_t configuration;
+
+    const char* client_name;
+    const char* broker_host;
+
+    // Init the configuration struct from libconfig
+    config_init(&configuration);
+
+    /*
+     * Check this part first. Not finding the config file is the most likely
+     * failure and we'll fail this before reserving memory.
+     */
+
+    if (config_read_file(&configuration, filepath) == CONFIG_FALSE) {
+        fprintf(stderr, "Cannot read config file: %s\n", config_error_text(&configuration));
+        ret = MQTTA_ERR_CONFIG_READ_FAILED;
+        goto cleanup_with_configuration;
+    }
+
+    // Now create the memory object
+    config = malloc(sizeof(*config));
+    if (!config) {
+        ret = -ENOMEM;
+        goto cleanup_with_configuration;
+    }
+
+    // We have to find an agent name!
+    if (config_lookup_string(&configuration, "mosqagent.name", &client_name))
+    {
+        const int slen = strlen(client_name);
+        config->client_name = malloc(slen + 1);
+        strncpy(config->client_name, client_name, slen+1);
+        // ensure string termination
+        config->client_name[slen] = '\0';
+    } else {
+        ret = MQTTA_ERR_CONFIG_NO_CLIENTNAME;
+        goto fail_with_config_object;
+    }
+
+    // Host is optional
+    if (config_lookup_string(&configuration, "mosqagent.broker.host", &broker_host))
+    {
+        const int slen = strlen(broker_host);
+        config->host = malloc(slen + 1);
+        strncpy(config->host, broker_host, slen+1);
+        // ensure string termination
+        config->host[slen] = '\0';
+    } else {
+        printf("Host not found, using configuration default.");
+        // TODO should the warning be communicated and if yes, how?
+    }
+
+    // Port is optional
+    config_lookup_int(&configuration, "mosqagent.broker.port", &config->port);
+
+    // If we got through to here, store configuration to agent.
+    // Destroy old config first.
+    destroy_configuration(agent);
+
+    agent->config = config;
+
+    // standard cleanup
+    goto cleanup_with_configuration;
+
+
+fail_with_config_object:
+    free(config);
+
+cleanup_with_configuration:
+    config_destroy(&configuration);
+
+    return ret;
 }
 
 
@@ -117,19 +209,21 @@ struct mosqagent* mosqagent_init_agent(void *priv_data)
         return NULL;
     }
 
+    agent->config = NULL;
     agent->idle = NULL;
     agent->priv_data = priv_data;
 
     return agent;
 }
 
-int mosqagent_setup_mqtt(struct mosqagent *agent,
-			 struct mosqagent_config *config)
+int mosqagent_setup_mqtt(struct mosqagent *agent)
 {
-    if (!agent || !config) {
+    if (!agent || !agent->config) {
         errno = EINVAL;
         return -1;
     }
+
+    struct mosqagent_config *config = agent->config;
 
     if (mqtt_init(config->client_name,
                 &(agent->mosq),
@@ -158,6 +252,8 @@ int mosqagent_close_agent(struct mosqagent *agent)
 
     // clean-up MQTT
     mqtt_close(agent->mosq);
+
+    destroy_configuration(agent);
 
     free(agent);
 
