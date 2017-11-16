@@ -28,12 +28,6 @@
 #	define LOG_ERR  stderr
 #endif
 
-static struct mosqagent_config config = {
-  .client_name = "mqtt-clock",
-  .host = "localhost",
-  .port = 1883,
-};
-
 struct clock_state {
   uint8_t current_second;
   uint8_t current_minute;
@@ -185,38 +179,49 @@ struct mosqagent_result* clock_idle(struct mosqagent *agent)
 }
 
 int main(int argc, char *argv[]) {
+    int ret;
+
+    // set to non-time values
+    struct clock_state state = {
+        .current_second = 0xff,
+        .current_minute = 0xff,
+    };
+
+    struct mosqagent* agent;
+    agent = mosqagent_init_agent(&state);
+    if (!agent) {
+        printf("Could not initialize the agent!\n");
+        return -1;
+    }
+
+    if (mqtta_load_configuration(agent, "../mqtta-config")) {
+        printf("Failed to load the configuration!\n");
+        return -1;
+    }
+
+    printf("Agent configuration:\n"
+           "\tName    %s\n"
+           "\tBroker  %s:%d\n",
+           agent->config->client_name,
+           agent->config->host,
+           agent->config->port);
+
   // initialize the system logging
 #ifdef WITH_SYSLOG
-  openlog(config.client_name, LOG_CONS | LOG_PID, LOG_USER);
+  openlog(agent->config->client_name, LOG_CONS | LOG_PID, LOG_USER);
 #endif
   syslog(LOG_INFO, "MQTT Clock serivce started.");
 
-  // set to non-time values
-  struct clock_state state = {
-    .current_second = 0xff,
-    .current_minute = 0xff,
-  };
-
-  struct mosqagent* agent;
-  agent = mosqagent_init_agent(&state);
-
-  if (agent) {
-    int ret;
-    ret = mosqagent_setup_mqtt(agent, &config);
+    ret = mosqagent_setup_mqtt(agent);
     if (ret) {
       syslog(LOG_ERR, "Mosquitto Agent could not connect: %s",
 	    mosqagent_strerror(errno));
     }
-  }
 
-  if (agent) {
-    int ret;
     ret = mosqagent_add_idle_call(agent, clock_idle);
-
-    if (!ret)
+    if (ret)
       syslog(LOG_ERR, "Cannot add clock idle call: %s",
 	     mosqagent_strerror(ret));
-  }
 
   bool run = (agent != NULL);
   while (run) {
