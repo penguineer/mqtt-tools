@@ -199,8 +199,8 @@ int mosqagent_add_idle_call(struct mosqagent *agent,
         // find tail
         struct mosqagent_idle_list *e;
         e = agent->idle;
-        while (e)
-        e = e->next;
+        while (e->next)
+            e = e->next;
 
         // add new entry
         e->next = entry;
