@@ -1,0 +1,17 @@
+language: c
+dist: trusty
+compiler:
+  - clang
+  - gcc
+addons:
+  apt:
+    sources:
+      # mosquitto is not available in ubuntu trusty, get it from ppa
+      - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+    packages:
+      - libmosquitto-dev
+      - libconfig-dev
+before_script:
+  - mkdir build
+  - cd build
+script: cmake .. && make
