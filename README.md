@@ -17,11 +17,11 @@ CLANG might work as well, except for some temporary #pragmas to handle temporary
 ### with Debian
 ```
 apt-get install libmosquitto-dev
+apt-get install libconfig-dev
 ```
 
 Not yet used:
 ```
-apt-get install libconfig-dev
 apt-get install libpthread-stubs0-dev
 apt-get install libpopt-dev
 ```
