@@ -11,8 +11,6 @@ find_library(CONFIG_LIBRARY NAMES config)
 #find_library(POPT_LIBRARY NAMES popt)
 find_library(MOSQUITTO_LIBRARY NAMES mosquitto)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-
 add_executable(mqtt-clock
 mqtt-clock.c
 mosqagent.c

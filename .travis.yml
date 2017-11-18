@@ -14,4 +14,4 @@ addons:
 before_script:
   - mkdir build
   - cd build
-script: cmake .. && make
+script: cmake -DCMAKE_C_FLAGS='-Wall -Wextra -Wcast-align' .. && make
