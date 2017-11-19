@@ -1,0 +1,156 @@
+language: c
+dist: trusty
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            # mosquitto is not available in ubuntu trusty, get it from ppa
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - g++-4.9
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - g++-5
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - g++-6
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - g++-7
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - clang-3.6
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - clang-3.7
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - clang-3.8
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-3.9
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - clang-3.9
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - clang-4.0
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+            - sourceline: 'ppa:mosquitto-dev/mosquitto-ppa'
+          packages:
+            - clang-5.0
+            - libmosquitto-dev
+            - libconfig-dev
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+before_script:
+  - mkdir build
+  - cd build
+script: cmake -DCMAKE_C_FLAGS='-Wall -Wextra -Wcast-align' .. && make
