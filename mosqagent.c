@@ -143,6 +143,10 @@ void mqtta_dispose_message(struct mqtta_message *msg)
     free(msg);
 }
 
+/*
+ * Destroy the internal configuration object, if ownership
+ * is with the agent.
+ */
 static void destroy_configuration(struct mosqagent *agent)
 {
     if (!agent || !mqtta_get_configuration(agent))
@@ -152,10 +156,8 @@ static void destroy_configuration(struct mosqagent *agent)
     if (!mqtta_mo_ownership(&agent->config_mo))
         return;
 
-    free(mqtta_get_configuration(agent)->client_name);
-    free(mqtta_get_configuration(agent)->host);
-
-    mqtta_mo_free(&agent->config_mo);
+    mqtta_dispose_configuration(mqtta_get_configuration(agent));
+    mqtta_mo_move(&agent->config_mo, NULL);
 }
 
 int mqtta_load_configuration(struct mosqagent *agent,
@@ -238,6 +240,16 @@ cleanup_with_configuration:
     config_destroy(&configuration);
 
     return ret;
+}
+
+void mqtta_dispose_configuration(struct mosqagent_config *config)
+{
+    if (!config)
+        return;
+    free(config->client_name);
+    free(config->host);
+
+    free(config);
 }
 
 struct mosqagent_config* mqtta_get_configuration(struct mosqagent *agent)

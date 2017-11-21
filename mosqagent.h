@@ -142,6 +142,14 @@ struct mosqagent_config {
 int mqtta_load_configuration(struct mosqagent *agent,
                              const char* filepath);
 
+/**
+ * \brief Dispose of a configuration object.
+ *
+ * Note: This frees the configuration object, not a memory object struc.
+ * Ownership is not relevant for this function!
+ */
+void mqtta_dispose_configuration(struct mosqagent_config *config);
+
 struct mosqagent_config* mqtta_get_configuration(struct mosqagent *agent);
 
 
