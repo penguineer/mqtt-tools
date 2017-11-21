@@ -75,7 +75,7 @@ void mqtta_mo_free(struct mqtta_memory_object *mo);
 
 
 struct mosqagent {
-    struct mosqagent_config *config;
+    struct mqtta_memory_object config_mo;
 
     struct mosqagent_idle_list *idle;
 
@@ -141,6 +141,8 @@ struct mosqagent_config {
  */
 int mqtta_load_configuration(struct mosqagent *agent,
                              const char* filepath);
+
+struct mosqagent_config* mqtta_get_configuration(struct mosqagent *agent);
 
 
 typedef struct mosqagent_result* (*mosqagent_idle_call)(struct mosqagent*);
