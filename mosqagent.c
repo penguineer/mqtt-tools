@@ -16,6 +16,41 @@
 
 #include "mosqhelper.h"
 
+
+void* mqtta_mo_ptr(const struct mqtta_memory_object *mo)
+{
+    return mo ? mo->ptr : NULL;
+}
+
+struct mqtta_memory_object* mqtta_mo_move(struct mqtta_memory_object *mo,
+                                          void *ptr,
+                                          mqtta_mo_deallocator *deallocator)
+{
+    if (mo) {
+        mo->ptr = ptr;
+        mo->deallocator = deallocator;
+    }
+
+    return mo;
+}
+
+struct mqtta_memory_object* mqtta_mo_set(struct mqtta_memory_object *mo,
+                                         void *ptr)
+{
+    // same as move without de-allocator
+    return mqtta_mo_move(mo, ptr, NULL);
+}
+
+void mqtta_mo_free(struct mqtta_memory_object *mo)
+{
+    if (mo && mo->ptr && mo->deallocator) {
+        mo->deallocator(mo->ptr);
+        mo->ptr = NULL;
+        //mo->deallocator = NULL;  // <-- not necessary
+    }
+}
+
+
 struct mosqagent_idle_list {
     struct mosqagent_idle_list *next;
     mosqagent_idle_call idle_call;
