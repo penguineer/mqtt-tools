@@ -143,6 +143,23 @@ int mqtta_load_configuration(struct mosqagent *agent,
                              const char* filepath);
 
 /**
+ * \brief Set a configuration, but keep ownership.
+ *
+ * Use this if the configuration struct is a stack pointer or global variable.
+ */
+void mqtta_set_configuration(struct mosqagent *agent,
+                            struct mosqagent_config* config);
+
+/**
+ * \brief Set a configuration and transfer ownership.
+ *
+ * Use this if the configuration is a heap object and the agent should
+ * destroy the configuration on clean-up.
+ */
+void mqtta_move_configuration(struct mosqagent *agent,
+                             struct mosqagent_config* config);
+
+/**
  * \brief Dispose of a configuration object.
  *
  * Note: This frees the configuration object, not a memory object struc.

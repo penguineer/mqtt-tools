@@ -242,6 +242,20 @@ cleanup_with_configuration:
     return ret;
 }
 
+void mqtta_set_configuration(struct mosqagent *agent,
+                            struct mosqagent_config* config)
+{
+    if (agent)
+        mqtta_mo_set(&agent->config_mo, config);
+}
+
+void mqtta_move_configuration(struct mosqagent *agent,
+                             struct mosqagent_config* config)
+{
+    if (agent)
+        mqtta_mo_move(&agent->config_mo, config);
+}
+
 void mqtta_dispose_configuration(struct mosqagent_config *config)
 {
     if (!config)
