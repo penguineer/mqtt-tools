@@ -200,15 +200,15 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Agent configuration:\n"
-           "\tName    %s\n"
-           "\tBroker  %s:%d\n",
-           agent->config->client_name,
-           agent->config->host,
-           agent->config->port);
+        "\tName    %s\n"
+        "\tBroker  %s:%d\n",
+        mqtta_get_configuration(agent)->client_name,
+        mqtta_get_configuration(agent)->host,
+        mqtta_get_configuration(agent)->port);
 
   // initialize the system logging
 #ifdef WITH_SYSLOG
-  openlog(agent->config->client_name, LOG_CONS | LOG_PID, LOG_USER);
+    openlog(mqtta_get_configuration(agent)->client_name, LOG_CONS | LOG_PID, LOG_USER);
 #endif
   syslog(LOG_INFO, "MQTT Clock serivce started.");
 
