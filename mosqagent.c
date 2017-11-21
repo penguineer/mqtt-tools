@@ -138,17 +138,17 @@ void mqtta_dispose_message(struct mqtta_message *msg)
     free(msg);
 }
 
+/*
+ * Destroy the internal configuration object, if ownership
+ * is with the agent.
+ */
 static void destroy_configuration(struct mosqagent *agent)
 {
-    if (!agent || !agent->config)
+    if (!agent)
         return;
 
-    free(agent->config->client_name);
-    free(agent->config->host);
-
-    free(agent->config);
-
-    agent->config = NULL;
+    // call the de-allocator of the configuration mo
+    mqtta_mo_free(&agent->config_mo);
 }
 
 int mqtta_load_configuration(struct mosqagent *agent,
@@ -217,7 +217,8 @@ int mqtta_load_configuration(struct mosqagent *agent,
     // Destroy old config first.
     destroy_configuration(agent);
 
-    agent->config = config;
+    // transfer ownership of the config object to the agent
+    mqtta_move_configuration(agent, config);
 
     // standard cleanup
     goto cleanup_with_configuration;
@@ -232,6 +233,45 @@ cleanup_with_configuration:
     return ret;
 }
 
+void mqtta_set_configuration(struct mosqagent *agent,
+                            struct mosqagent_config* config)
+{
+    if (agent)
+        mqtta_mo_set(&agent->config_mo, config);
+}
+
+void mqtta_move_configuration(struct mosqagent *agent,
+                             struct mosqagent_config* config)
+{
+    if (agent)
+        mqtta_mo_move(&agent->config_mo, config,
+                      mqtta_configuration_deallocator);
+}
+
+void mqtta_dispose_configuration(struct mosqagent_config *config)
+{
+    if (!config)
+        return;
+    free(config->client_name);
+    free(config->host);
+}
+
+void mqtta_configuration_deallocator(void* config)
+{
+    if (!config)
+        return;
+
+    struct mosqagent_config *c = (struct mosqagent_config*)config;
+
+    mqtta_dispose_configuration(c);
+    free(c);
+}
+
+
+struct mosqagent_config* mqtta_get_configuration(const struct mosqagent *agent)
+{
+    return agent ? agent->config_mo.ptr : NULL;
+}
 
 struct mosqagent* mosqagent_init_agent(void *priv_data)
 {
@@ -244,21 +284,23 @@ struct mosqagent* mosqagent_init_agent(void *priv_data)
         return NULL;
     }
 
-    agent->config = NULL;
     agent->idle = NULL;
     agent->priv_data = priv_data;
+    mqtta_mo_move(&agent->config_mo, NULL, NULL);
 
     return agent;
 }
 
 int mosqagent_setup_mqtt(struct mosqagent *agent)
 {
-    if (!agent || !agent->config) {
+    if (!agent || !mqtta_get_configuration(agent)) {
         errno = EINVAL;
         return -1;
     }
 
-    struct mosqagent_config *config = agent->config;
+    struct mosqagent_config *config =
+        mqtta_get_configuration(agent);
+
 
     if (mqtt_init(config->client_name,
                 &(agent->mosq),

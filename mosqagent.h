@@ -104,7 +104,7 @@ void mqtta_mo_free(struct mqtta_memory_object *mo);
 
 
 struct mosqagent {
-    struct mosqagent_config *config;
+    struct mqtta_memory_object config_mo;
 
     struct mosqagent_idle_list *idle;
 
@@ -170,6 +170,44 @@ struct mosqagent_config {
  */
 int mqtta_load_configuration(struct mosqagent *agent,
                              const char* filepath);
+
+/**
+ * \brief Set a configuration, but keep ownership.
+ *
+ * Use this if the configuration struct is a stack pointer or global variable.
+ */
+void mqtta_set_configuration(struct mosqagent *agent,
+                            struct mosqagent_config* config);
+
+/**
+ * \brief Set a configuration and transfer ownership.
+ *
+ * Use this if the configuration is a heap object and the agent should
+ * destroy the configuration on clean-up.
+ */
+void mqtta_move_configuration(struct mosqagent *agent,
+                             struct mosqagent_config* config);
+
+/**
+ * \brief Dispose of a configuration object.
+ *
+ * Note: This frees the configuration object, not a memory object struc.
+ * Ownership is not relevant for this function!
+ *
+ * \note Call this on stack pointers.
+ */
+void mqtta_dispose_configuration(struct mosqagent_config *config);
+
+/**
+ * \brief (Heap) De-allocator for configuration objects
+ *
+ * Frees the __char*__ fields and then the struct itself.
+ *
+ * \warning Only use with heap objects where a call to __free__ is safe!
+ */
+void mqtta_configuration_deallocator(void *config);
+
+struct mosqagent_config* mqtta_get_configuration(const struct mosqagent *agent);
 
 
 typedef struct mosqagent_result* (*mosqagent_idle_call)(struct mosqagent*);
