@@ -16,6 +16,46 @@
 
 #include "mosqhelper.h"
 
+
+void* mqtta_mo_ptr(struct mqtta_memory_object *mo)
+{
+    return mo ? mo->ptr : NULL;
+}
+
+bool mqtta_mo_ownership(struct mqtta_memory_object *mo)
+{
+    return mo ? mo->ownership : false;
+}
+
+struct mqtta_memory_object* mqtta_mo_move(struct mqtta_memory_object *mo, void *ptr)
+{
+    if (mo) {
+        mo->ptr = ptr;
+        mo->ownership = true;
+    }
+
+    return mo;
+}
+
+struct mqtta_memory_object* mqtta_mo_set(struct mqtta_memory_object *mo, void *ptr)
+{
+    if (mo) {
+        mo->ptr = ptr;
+        mo->ownership = false;
+    }
+
+    return mo;
+}
+
+void mqtta_mo_free(struct mqtta_memory_object *mo)
+{
+    if (mo && mo->ownership) {
+        free(mo->ptr);
+        mo->ptr = NULL;
+    }
+}
+
+
 struct mosqagent_idle_list {
     struct mosqagent_idle_list *next;
     mosqagent_idle_call idle_call;
