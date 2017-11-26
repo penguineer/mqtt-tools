@@ -122,8 +122,8 @@ struct mqtta_message {
 
 struct mqtta_message* mqtta_create_message(const char* topic,
                                            const char* payload,
-                                           const int qos,
-                                           const bool retain);
+                                           int qos,
+                                           bool retain);
 
 int mqtta_send_message(struct mosqagent* agent,
                        struct mqtta_message *msg);

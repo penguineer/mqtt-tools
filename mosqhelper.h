@@ -16,8 +16,8 @@ int mqtt_init(const char* clientname,
 
 int mqtt_connect(struct mosquitto *mosq,
                  const char* host,
-		 const int port,
-		 const int retries);
+                 int port,
+                 int retries);
 
 int mqtt_loop(struct mosquitto *mosq);
 
