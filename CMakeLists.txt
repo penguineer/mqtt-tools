@@ -14,6 +14,9 @@ project(mqtt-tools
 #       because those can not be distinguished with different tags.
 #
 
+# Additional CMake modules
+include(GNUInstallDirs)				# cmake 2.8.5
+
 # Options
 option(BUILD_SHARED_LIBS
     "Global flag to cause add_library to create shared libraries if on."
@@ -37,6 +40,8 @@ include_directories(
 )
 
 # Libraries
+
+## mosqhelper
 add_library(mosqhelper
     mosqhelper.c
 )
@@ -48,7 +53,17 @@ set_target_properties(mosqhelper PROPERTIES
 target_link_libraries(mosqhelper
     "${MOSQUITTO_LIBRARY}"
 )
+install(TARGETS mosqhelper
+	EXPORT ${PROJECT_NAME}-targets
+	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
+install(FILES
+	mosqhelper.h
+	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
+)
 
+## mosqagent
 add_library(mosqagent
     mosqagent.c
 )
@@ -62,8 +77,19 @@ target_link_libraries(mosqagent
     "${CONFIG_LIBRARY}"
     "${MOSQUITTO_LIBRARY}"
 )
+install(TARGETS mosqagent
+	EXPORT ${PROJECT_NAME}-targets
+	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
+install(FILES
+	mosqagent.h
+	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
+)
 
 # Agents
+
+# mqtt-clock
 add_executable(mqtt-clock
     mqtt-clock.c
 )
@@ -71,6 +97,15 @@ target_link_libraries(mqtt-clock
     mosqhelper
     mosqagent
 )
+install(TARGETS mqtt-clock
+	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
 
+# Install CMake targets
+install(EXPORT ${PROJECT_NAME}-targets
+	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+)
+
+# For later
 #target_link_libraries(mqtt-clock ${POPT_LIBRARY})
 #target_link_libraries(mqtt-clock ${PTHREAD_LIBRARY})
