@@ -47,6 +47,10 @@ This is a very basic first go. Some parts of the API are working, but it is clea
 
 This project is mostly, but not necessary solely, maintained by Stefan Haun (<tux@netz39.de>).
 
+Contributions by:
+* Alexander Dahl <alex@netz39.de>, known on GitHub as @LeSpocky
+* Stefan Haun <tux@netz39.de>, known on GitHub as @penguineer
+
 ## Contribute
 Contributions are welcome. Please consider the roadmap for your contributions. The maintainers are happy to answer questions.
 
