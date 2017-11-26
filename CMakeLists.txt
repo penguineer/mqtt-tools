@@ -1,11 +1,26 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
-project (MQTTAGENT C)
+project(mqtt-tools
+    VERSION 0.1.0
+    LANGUAGES C)
 
-file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+#
+# NOTE  This project uses semantic versioning as described at
+#
+#       https://semver.org/
+#
+#       As long as all components (libraries, agents, helper) are in the
+#       same Git repository, all have to share the same version numbers,
+#       because those can not be distinguished with different tags.
+#
 
+# Options
+option(BUILD_SHARED_LIBS
+    "Global flag to cause add_library to create shared libraries if on."
+    OFF
+)
 
-# These libraries are noted here for later use
+# Requirements (commented libraries noted here for later use)
 find_library(CONFIG_LIBRARY NAMES config)
 #find_library(PTHREAD_LIBRARY NAMES pthread)
 #find_library(POPT_LIBRARY NAMES popt)
@@ -21,13 +36,41 @@ include_directories(
     "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-add_executable(mqtt-clock
-mqtt-clock.c
-mosqagent.c
-mosqhelper.c
+# Libraries
+add_library(mosqhelper
+    mosqhelper.c
+)
+set_target_properties(mosqhelper PROPERTIES
+    OUTPUT_NAME mosqhelper
+    SOVERSION   ${PROJECT_VERSION_MAJOR}
+    VERSION     ${PROJECT_VERSION}
+)
+target_link_libraries(mosqhelper
+    "${MOSQUITTO_LIBRARY}"
 )
 
-target_link_libraries(mqtt-clock ${CONFIG_LIBRARY})
+add_library(mosqagent
+    mosqagent.c
+)
+set_target_properties(mosqagent PROPERTIES
+    OUTPUT_NAME mosqagent
+    SOVERSION   ${PROJECT_VERSION_MAJOR}
+    VERSION     ${PROJECT_VERSION}
+)
+target_link_libraries(mosqagent
+    mosqhelper
+    "${CONFIG_LIBRARY}"
+    "${MOSQUITTO_LIBRARY}"
+)
+
+# Agents
+add_executable(mqtt-clock
+    mqtt-clock.c
+)
+target_link_libraries(mqtt-clock
+    mosqhelper
+    mosqagent
+)
+
 #target_link_libraries(mqtt-clock ${POPT_LIBRARY})
 #target_link_libraries(mqtt-clock ${PTHREAD_LIBRARY})
-target_link_libraries(mqtt-clock ${MOSQUITTO_LIBRARY})
