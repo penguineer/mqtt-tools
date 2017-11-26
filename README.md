@@ -35,16 +35,21 @@ This is a very basic first go. Some parts of the API are working, but it is clea
 
 
 ## Roadmap
-* Add configuration handling. MQTT parameters (and others needed for an agent implementation) should be provided either by the command line arguments or via a configuration file. See CMakeLists.txt for prepared inlcusion of popts and libconfig.
 * Add subscription handling and callback methods on incoming MQTT messages.
 * Provide a way to return to-be-sent messages from the callback and idle handlers. Sending MQTT messages is blocking and should at some point go to a different thread/process.
+* Make this a real library with the clock as a usage example.
 * Jim™ uses a second thread or process to handle possibly blocking network i/o. Jim is a smart developer. Be like Jim.
 * Implement the daemonizied agent part.
+* Improve configuration roadmap: Add a nicer API for configuration handling, keeping in mind the varous sources of configuration instances (file, built-in, some web-service, …).
 * Documentation …
 
 ## Maintainers
 
 This project is mostly, but not necessary solely, maintained by Stefan Haun (<tux@netz39.de>).
+
+Contributions by:
+* Alexander Dahl <alex@netz39.de>, known on GitHub as @LeSpocky
+* Stefan Haun <tux@netz39.de>, known on GitHub as @penguineer
 
 ## Contribute
 Contributions are welcome. Please consider the roadmap for your contributions. The maintainers are happy to answer questions.
