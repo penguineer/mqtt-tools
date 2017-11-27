@@ -4,6 +4,9 @@ project(mqtt-tools
     VERSION 0.1.0
     LANGUAGES C)
 
+set(MQTTA_DESCRIPTION "A library to simplify agents that react on/with external events or MQTT messages by handling 95% of the MQTT use-cases.")
+set(MQTTA_URL "https://github.com/penguineer/mqtt-tools")
+
 #
 # NOTE  This project uses semantic versioning as described at
 #
@@ -45,6 +48,18 @@ add_subdirectory(agents)
 install(EXPORT ${PROJECT_NAME}-targets
 	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
 )
+
+# Documentation
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in"
+		"${CMAKE_CURRENT_BINARY_DIR}/Doxyfile" @ONLY)
+	add_custom_target(doc_${PROJECT_NAME} "${DOXYGEN_EXECUTABLE}"
+		WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+		COMMENT "Generating API documentation with Doxygen" VERBATIM
+		SOURCES "${PROJECT_SOURCE_DIR}/Doxyfile.in"
+	)
+endif(DOXYGEN_FOUND)
 
 # For later
 #target_link_libraries(mqtt-clock ${POPT_LIBRARY})

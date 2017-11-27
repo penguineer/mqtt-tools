@@ -1,8 +1,14 @@
-/*
- * Helper Lib for libmosquitto
+/*******************************************************************//**
+ * \file		mosqhelper.h
+ *
+ * \brief		Helper Lib for libmosquitto
+ *
+ * \author		Stefan Haun <tux@netz39.de>
  *
  * SPDX-License-Identifier: MIT
- */
+ *
+ * \copyright	2017 Stefan Haun, Netz39 e.V.
+ **********************************************************************/
 
 #pragma once
 
