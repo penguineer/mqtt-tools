@@ -1,3 +1,10 @@
+#
+# Copyright (c) 2017 Stefan Haun, Netz39 e.V., and mqtta contributors
+#
+# SPDX-License-Identifier: MIT
+# License-Filename: LICENSES/MIT.txt
+#
+
 configure_file(
     mqtta-build.h.in
     mqtta-build.h

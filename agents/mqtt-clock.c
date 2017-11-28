@@ -2,6 +2,7 @@
  * Clock Example
  *
  * SPDX-License-Identifier: MIT
+ * License-Filename: LICENSES/MIT.txt
  */
 
 #include <stdint.h>

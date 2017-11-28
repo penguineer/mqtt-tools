@@ -1,3 +1,10 @@
+#
+# Copyright (c) 2017 Stefan Haun, Netz39 e.V., and mqtta contributors
+#
+# SPDX-License-Identifier: MIT
+# License-Filename: LICENSES/MIT.txt
+#
+
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"
     "${PROJECT_BINARY_DIR}/include"
