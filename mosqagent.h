@@ -227,3 +227,5 @@ int mosqagent_add_idle_call(struct mosqagent *agent,
 int mosqagent_idle(struct mosqagent *agent);
 
 const char* mosqagent_strerror(int mosq_errno);
+
+const char* mqtta_version( void );

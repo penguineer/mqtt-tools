@@ -11,6 +11,16 @@ find_library(CONFIG_LIBRARY NAMES config)
 #find_library(POPT_LIBRARY NAMES popt)
 find_library(MOSQUITTO_LIBRARY NAMES mosquitto)
 
+# Headers
+configure_file(
+    mqtta-build.h.in
+    mqtta-build.h
+    @ONLY
+)
+include_directories(
+    "${CMAKE_CURRENT_BINARY_DIR}"
+)
+
 add_executable(mqtt-clock
 mqtt-clock.c
 mosqagent.c
