@@ -10,6 +10,8 @@
 #include <syslog.h>
 #include <unistd.h>
 
+#include <mosquitto.h>
+
 int mqtt_init(const char* clientname,
 	      struct mosquitto **mosq,
 	      void *mqtt_obj)

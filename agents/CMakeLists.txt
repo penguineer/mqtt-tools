@@ -1,0 +1,16 @@
+include_directories(
+	"${PROJECT_SOURCE_DIR}/include"
+    "${PROJECT_BINARY_DIR}/include"
+)
+
+# mqtt-clock
+add_executable(mqtt-clock
+    mqtt-clock.c
+)
+target_link_libraries(mqtt-clock
+    mosqhelper
+    mqtta
+)
+install(TARGETS mqtt-clock
+	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
