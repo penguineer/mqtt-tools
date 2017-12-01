@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "mosqagent.h"
+#include "mqtta.h"
 
 #include <errno.h>
 #include <stddef.h>

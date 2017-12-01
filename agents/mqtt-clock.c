@@ -16,8 +16,8 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include "mosqagent.h"
-#include "mosqhelper.h"
+#include <mqtt-tools/mqtta.h>
+#include <mqtt-tools/mosqhelper.h>
 
 #define WITH_SYSLOG
 #ifdef WITH_SYSLOG
