@@ -15,6 +15,7 @@
 #include <mosquitto.h>
 
 #include "mosqhelper.h"
+#include "mqtta-build.h"
 
 
 void* mqtta_mo_ptr(const struct mqtta_memory_object *mo)
@@ -438,4 +439,9 @@ int mosqagent_idle(struct mosqagent *agent)
 const char* mosqagent_strerror(int mosq_errno)
 {
     return mosquitto_strerror(mosq_errno);
+}
+
+const char* mqtta_version( void )
+{
+    return MQTTA_VERSION;
 }

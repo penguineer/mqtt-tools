@@ -122,8 +122,8 @@ struct mqtta_message {
 
 struct mqtta_message* mqtta_create_message(const char* topic,
                                            const char* payload,
-                                           const int qos,
-                                           const bool retain);
+                                           int qos,
+                                           bool retain);
 
 int mqtta_send_message(struct mosqagent* agent,
                        struct mqtta_message *msg);
@@ -227,3 +227,5 @@ int mosqagent_add_idle_call(struct mosqagent *agent,
 int mosqagent_idle(struct mosqagent *agent);
 
 const char* mosqagent_strerror(int mosq_errno);
+
+const char* mqtta_version( void );
