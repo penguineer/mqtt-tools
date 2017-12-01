@@ -1,7 +1,14 @@
-/*
+/*******************************************************************//**
+ * \file		mqtta.h
+ *
+ * \brief		Library to simplify MQTT agents
+ *
+ * \author		Stefan Haun <tux@netz39.de>
  *
  * SPDX-License-Identifier: MIT
- */
+ *
+ * \copyright	2017 Stefan Haun, Netz39 e.V.
+ **********************************************************************/
 
 #pragma once
 
