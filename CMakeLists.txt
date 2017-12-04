@@ -53,6 +53,12 @@ install(EXPORT ${PROJECT_NAME}-targets
 	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
 )
 
+# Tests
+option(MQTTA_WITH_TESTS "Unit tests for mqtta." OFF)
+if(MQTTA_WITH_TESTS)
+	add_subdirectory(test)
+endif(MQTTA_WITH_TESTS)
+
 # Documentation
 find_package(Doxygen)
 if(DOXYGEN_FOUND)

@@ -11,6 +11,7 @@ addons:
     packages:
     - libmosquitto-dev
     - libconfig-dev
+    - libcmocka-dev 
 
 compiler:
   - clang
@@ -20,4 +21,4 @@ before_script:
   - mkdir build
   - cd build
 
-script: cmake -DCMAKE_C_FLAGS='-Wall -Wextra -Wcast-align' .. && make
+script: cmake -DCMAKE_C_FLAGS='-Wall -Wextra -Wcast-align' -DMQTTA_WITH_TESTS=ON .. && make
