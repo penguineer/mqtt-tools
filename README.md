@@ -1,6 +1,7 @@
 # MQTT Tools
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+[![reuse compliant](https://reuse.software/badge/reuse-compliant.svg)](https://reuse.software/)
 [![Build Status](https://travis-ci.org/penguineer/mqtt-tools.svg?branch=master)](https://travis-ci.org/penguineer/mqtt-tools)
 
 > A library to simplify agents that react on/with external events or MQTT messages by handling 95% of the MQTT use-cases.

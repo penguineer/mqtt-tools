@@ -6,8 +6,9 @@
  * \author		Stefan Haun <tux@netz39.de>
  *
  * SPDX-License-Identifier: MIT
+ * License-Filename: LICENSES/MIT.txt
  *
- * \copyright	2017 Stefan Haun, Netz39 e.V.
+ * \copyright	2017 Stefan Haun, Netz39 e.V., and mqtta contributors
  **********************************************************************/
 
 #pragma once

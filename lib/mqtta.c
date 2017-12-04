@@ -1,6 +1,7 @@
 /*
  *
  * SPDX-License-Identifier: MIT
+ * License-Filename: LICENSES/MIT.txt
  */
 
 #include "mqtta.h"
