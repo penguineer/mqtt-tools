@@ -1,11 +1,11 @@
 #
-# Copyright 2017 Stefan Haun, Netz39 e.V., and mqtta contributors
+# Copyright 2017,2018 Stefan Haun, Netz39 e.V., and mqtta contributors
 #
 # SPDX-License-Identifier: MIT
 # License-Filename: LICENSES/MIT.txt
 #
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 
 project(mqtt-tools
     VERSION 0.1.0
