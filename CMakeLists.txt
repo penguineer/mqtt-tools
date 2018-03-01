@@ -24,9 +24,6 @@ set(MQTTA_URL "https://github.com/penguineer/mqtt-tools")
 #       because those can not be distinguished with different tags.
 #
 
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
 # Additional CMake modules
 include(GNUInstallDirs)				# cmake 2.8.5
 

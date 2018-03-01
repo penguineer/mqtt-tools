@@ -1,5 +1,5 @@
 #
-# 2017 Stefan Haun, Netz39 e.V., and mqtta contributors
+# 2017,2018 Stefan Haun, Netz39 e.V., and mqtta contributors
 #
 # SPDX-License-Identifier: MIT
 # License-Filename: LICENSES/MIT.txt
@@ -15,9 +15,11 @@ add_library(mosqhelper
     mosqhelper.c
 )
 set_target_properties(mosqhelper PROPERTIES
-    OUTPUT_NAME mosqhelper
-    SOVERSION   ${PROJECT_VERSION_MAJOR}
-    VERSION     ${PROJECT_VERSION}
+    OUTPUT_NAME         mosqhelper
+    SOVERSION           ${PROJECT_VERSION_MAJOR}
+    VERSION             ${PROJECT_VERSION}
+    C_STANDARD          99
+    C_STANDARD_REQUIRED ON
 )
 target_link_libraries(mosqhelper
     "${MOSQUITTO_LIBRARY}"
@@ -33,9 +35,11 @@ add_library(mqtta
     mqtta.c
 )
 set_target_properties(mqtta PROPERTIES
-    OUTPUT_NAME mqtta
-    SOVERSION   ${PROJECT_VERSION_MAJOR}
-    VERSION     ${PROJECT_VERSION}
+    OUTPUT_NAME         mqtta
+    SOVERSION           ${PROJECT_VERSION_MAJOR}
+    VERSION             ${PROJECT_VERSION}
+    C_STANDARD          99
+    C_STANDARD_REQUIRED ON
 )
 target_link_libraries(mqtta
     mosqhelper
