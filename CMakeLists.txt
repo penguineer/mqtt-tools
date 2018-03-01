@@ -1,11 +1,11 @@
 #
-# Copyright 2017 Stefan Haun, Netz39 e.V., and mqtta contributors
+# Copyright 2017,2018 Stefan Haun, Netz39 e.V., and mqtta contributors
 #
 # SPDX-License-Identifier: MIT
 # License-Filename: LICENSES/MIT.txt
 #
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 
 project(mqtt-tools
     VERSION 0.1.0
@@ -23,9 +23,6 @@ set(MQTTA_URL "https://github.com/penguineer/mqtt-tools")
 #       same Git repository, all have to share the same version numbers,
 #       because those can not be distinguished with different tags.
 #
-
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Additional CMake modules
 include(GNUInstallDirs)				# cmake 2.8.5
