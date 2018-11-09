@@ -231,7 +231,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    if (mqtta_load_configuration(agent, "../mqtta-config")) {
+    if (mqtta_load_configuration(agent, "mqtta-config")) {
         printf("Failed to load the configuration!\n");
         return -1;
     }
