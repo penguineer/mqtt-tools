@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #include <time.h>
 #include <sys/time.h>
@@ -179,8 +180,43 @@ struct mosqagent_result* clock_idle(struct mosqagent *agent)
   return NULL;
 }
 
+bool run = true;
+
+void sig_finish_handler(int signum) {
+    printf("Interrupted!\n");
+
+    run = false;
+}
+
+int set_signal_handlers() {
+    struct sigaction sact;
+    sigset_t block_mask;
+    int ret = 0;
+
+    sigemptyset(&block_mask);
+    sigaddset(&block_mask, SIGINT);
+    sigaddset(&block_mask, SIGTERM);
+    sigaddset(&block_mask, SIGQUIT);
+
+    sact.sa_handler = &sig_finish_handler;
+    sact.sa_mask = block_mask;
+    sact.sa_flags = 0;
+
+    ret |= sigaction(SIGINT, &sact, NULL);
+    ret |= sigaction(SIGTERM, &sact, NULL);
+    ret |= sigaction(SIGQUIT, &sact, NULL);
+
+    return ret;
+}
+
 int main(int argc, char *argv[]) {
     int ret;
+
+    ret = set_signal_handlers();
+    if (ret) {
+        printf("Error setting signal handlers!\n");
+        return -1;
+    }
 
     // set to non-time values
     struct clock_state state = {
@@ -224,7 +260,7 @@ int main(int argc, char *argv[]) {
       syslog(LOG_ERR, "Cannot add clock idle call: %s",
 	     mosqagent_strerror(ret));
 
-  bool run = (agent != NULL);
+  run &= (agent != NULL);
   while (run) {
     mosqagent_idle(agent);
 
