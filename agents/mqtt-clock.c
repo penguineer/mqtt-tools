@@ -138,7 +138,7 @@ struct mosqagent_result* clock_idle(struct mosqagent *agent)
 
   if (state->current_minute != current_dt.minute) {
     send_value(agent,
-		"Netz39/Service/Clock/Wallclock/Year",
+		"Netz39/Service/Clock/Wallclock/Simple/Year",
 		"%02d",
 		1900 + current_dt.year);
 
