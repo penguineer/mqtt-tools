@@ -5,13 +5,13 @@
 # License-Filename: LICENSES/MIT.txt
 #
 
-find_library(CMOCKA_LIBRARY NAMES cmocka)
+find_package(cmocka CONFIG REQUIRED)
 
 add_executable(mqtta-test-null
 	mqtta-test-null.c
 )
 target_link_libraries(mqtta-test-null
-	"${CMOCKA_LIBRARY}"
+	"${CMOCKA_LIBRARIES}"
 )
 add_test(NAME test_null
 	COMMAND mqtta-test-null
