@@ -1,5 +1,5 @@
 #
-# Copyright 2017,2018 Stefan Haun, Netz39 e.V., and mqtta contributors
+# Copyright 2016–2019 Stefan Haun, Netz39 e.V., and mqtta contributors
 #
 # SPDX-License-Identifier: MIT
 # License-Filename: LICENSES/MIT.txt
@@ -56,8 +56,10 @@ install(EXPORT ${PROJECT_NAME}-targets
 # Tests
 option(MQTTA_WITH_TESTS "Unit tests for mqtta." OFF)
 if(MQTTA_WITH_TESTS)
-	add_subdirectory(test)
-endif(MQTTA_WITH_TESTS)
+	enable_testing()
+	include(CTest)
+	add_subdirectory("test")
+endif()
 
 # Documentation
 find_package(Doxygen)
