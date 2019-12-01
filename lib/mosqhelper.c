@@ -4,7 +4,7 @@
  * License-Filename: LICENSES/MIT.txt
  */
 
-#include "mosqhelper.h"
+#include "mqtt-tools/mosqhelper.h"
 
 #include <errno.h>
 

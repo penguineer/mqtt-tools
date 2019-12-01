@@ -4,7 +4,7 @@
  * License-Filename: LICENSES/MIT.txt
  */
 
-#include "mqtta.h"
+#include "mqtt-tools/mqtta.h"
 
 #include <errno.h>
 #include <stddef.h>
@@ -15,7 +15,7 @@
 
 #include <mosquitto.h>
 
-#include "mosqhelper.h"
+#include "mqtt-tools/mosqhelper.h"
 #include "mqtta-build.h"
 
 
