@@ -13,6 +13,21 @@ add_executable(mqtta-test-null
 target_link_libraries(mqtta-test-null
 	"${CMOCKA_LIBRARIES}"
 )
-add_test(NAME test_null
+add_test(NAME mqtta-null
 	COMMAND mqtta-test-null
+)
+
+add_executable(mqtta-test-basic
+	mqtta-test-basic.c
+)
+target_include_directories(mqtta-test-basic
+	PRIVATE
+		${PROJECT_BINARY_DIR}/include/mqtt-tools
+)
+target_link_libraries(mqtta-test-basic
+	"${CMOCKA_LIBRARIES}"
+	mqtta::mqtta
+)
+add_test(NAME mqtta-basic
+	COMMAND mqtta-test-basic
 )
