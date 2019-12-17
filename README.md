@@ -22,6 +22,11 @@ apt-get install libmosquitto-dev
 apt-get install libconfig-dev
 ```
 
+If you want to build and run unit tests:
+```
+apt-get install libcmocka-dev
+```
+
 Not yet used:
 ```
 apt-get install libpthread-stubs0-dev
@@ -30,6 +35,9 @@ apt-get install libpopt-dev
 
 ## Usage
 The mqtt-clock.c shows a simple example of a (not yet daemonizied) agent that provides the current time over different MQTT topics. There is no reaction to incoming messages yet.
+
+### Unit Tests
+mqtt-tools uses [cmocka](https://cmocka.org/) for unit testing. To build with unit tests, set the CMake variable `MQTT_WITH_TESTS` to 'ON'. To run the tests, just call `ctest` in your build directory or directly call the test executables built.
 
 ## Status
 This is a very basic first go. Some parts of the API are working, but it is clearly visible that work needs to be done; in the API and the implementation. Contributions are welcome.
